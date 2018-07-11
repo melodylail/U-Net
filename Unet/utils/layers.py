@@ -222,7 +222,7 @@ def bilinear_upsample_weights(factor, num_outputs):
     og = np.ogrid[:kernel_size, :kernel_size]
     upsample_kernel = (1 - abs(og[0] - center) / rfactor) * (1 - abs(og[1] - center) / rfactor)
 
-    for i in xrange(num_outputs):
+    for i in range(num_outputs):
         weights_kernel[:, :, i, i] = upsample_kernel
 
     init = tf.constant_initializer(value = weights_kernel, dtype = tf.float32)

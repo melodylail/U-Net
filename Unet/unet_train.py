@@ -46,6 +46,8 @@ def train():
     Train unet using specified args:
     """
 
+    tf.reset_default_graph() 
+
     data_files, data_size = load_datafiles(FLAGS.tfrecords_prefix)
     images, labels, filenames = dataset_loader.inputs(
                                     data_files = data_files,
@@ -55,6 +57,10 @@ def train():
                                     train = True)
 
     logits = unet.build(images, FLAGS.num_classes, True)
+
+    print("images = {}".format(images))
+    print("logits = {}".format(logits))
+    print("lables = {}".format(labels))
 
     accuarcy = unet.accuracy(logits, labels)
 
@@ -146,7 +152,7 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate_decay_steps', help = 'Learning rate decay steps', type = int, default = 10000)
     parser.add_argument('--learning_rate_decay_rate', help = 'Learning rate decay rate', type = float, default = 0.9)
     parser.add_argument('--weight_decay_rate', help = 'Weight decay rate', type = float, default = 0.0005)
-    parser.add_argument('--batch_size', help = 'Batch size', type = int, default = 8)
+    parser.add_argument('--batch_size', help = 'Batch size', type = int, default = 1)
     parser.add_argument('--num_epochs', help = 'Number of epochs', type = int, default = 300)
 
     FLAGS, unparsed = parser.parse_known_args()

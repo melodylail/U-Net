@@ -60,27 +60,27 @@ def build(color_inputs, num_classes, is_training):
     upsample6     = layers.deconv_upsample(color_drop5, 2,  'upsample6')
     concat6       = layers.concat(upsample6, color_conv4_2, 'contcat6')
     color_conv6_1 = layers.conv_btn(concat6,       [3, 3], 512, 'conv6_1', is_training = is_training)
-    color_conv6_2 = layers.conv_btn(color_conv6_1, [3, 3], 512, 'conv6_1', is_training = is_training)
+    color_conv6_2 = layers.conv_btn(color_conv6_1, [3, 3], 512, 'conv6_2', is_training = is_training)
     color_drop6   = layers.dropout(color_conv6_2, dropout_keep_prob, 'drop6')
 
     # Block 2
     upsample7     = layers.deconv_upsample(color_drop6, 2,  'upsample7')
     concat7       = layers.concat(upsample7, color_conv3_2, 'concat7')
     color_conv7_1 = layers.conv_btn(concat7,       [3, 3], 256, 'conv7_1', is_training = is_training)
-    color_conv7_2 = layers.conv_btn(color_conv7_1, [3, 3], 256, 'conv7_1', is_training = is_training)
+    color_conv7_2 = layers.conv_btn(color_conv7_1, [3, 3], 256, 'conv7_2', is_training = is_training)
     color_drop7   = layers.dropout(color_conv7_2, dropout_keep_prob, 'drop7')
 
     # Block 3
     upsample8     = layers.deconv_upsample(color_drop7, 2,  'upsample8')
     concat8       = layers.concat(upsample8, color_conv2_2, 'concat8')
     color_conv8_1 = layers.conv_btn(concat8,       [3, 3], 128, 'conv8_1', is_training = is_training)
-    color_conv8_2 = layers.conv_btn(color_conv8_1, [3, 3], 128, 'conv8_1', is_training = is_training)
+    color_conv8_2 = layers.conv_btn(color_conv8_1, [3, 3], 128, 'conv8_2', is_training = is_training)
 
     # Block 4
-    upsample9     = layers.deconv_upsample(color_conv9_2, 2, 'upsample9')
-    concat9       = layers.concat(upsample8, color_conv1_2,  'concat9')
+    upsample9     = layers.deconv_upsample(color_conv8_2, 2, 'upsample9')
+    concat9       = layers.concat(upsample9, color_conv1_2,  'concat9')
     color_conv9_1 = layers.conv_btn(concat9,       [3, 3], 64,   'conv9_1', is_training = is_training)
-    color_conv9_2 = layers.conv_btn(color_conv9_1, [3, 3], 64,   'conv9_1', is_training = is_training)
+    color_conv9_2 = layers.conv_btn(color_conv9_1, [3, 3], 64,   'conv9_2', is_training = is_training)
 
     # Block 5
     score  = layers.conv(color_conv9_2, [1, 1], num_classes, 'score', activation_fn = None)

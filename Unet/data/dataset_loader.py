@@ -108,7 +108,8 @@ def parse_example_proto(example_serialized, image_format):
       color_image = tf.image.decode_jpeg(features['image/encoded/color'])
       label_image = tf.image.decode_jpeg(features['image/encoded/label'])
 
-    color_shape = tf.stack([height, width, 3])
+    #color_shape = tf.stack([height, width, 3])
+    color_shape = tf.stack([height, width, 1])
     label_shape = tf.stack([height, width, 1])
 
     color_image = tf.reshape(color_image, color_shape)
@@ -148,7 +149,8 @@ def batch_inputs(data_files, batch_size, image_size, train, num_epochs, num_prep
         _, example_serialized = reader.read(filename_queue)
 
         color_image, label_image, filename = parse_example_proto(example_serialized, IMAGE_FORMAT)
-        color_image = image_preprocessing(color_image, image_size, is_color = True)
+        #color_image = image_preprocessing(color_image, image_size, is_color = True)
+        color_image = image_preprocessing(color_image, image_size, is_color = False)
         label_image = image_preprocessing(label_image, image_size, is_color = False)
 
         color_image = tf.cast(color_image, tf.float32)
@@ -171,6 +173,6 @@ def batch_inputs(data_files, batch_size, image_size, train, num_epochs, num_prep
                 batch_size = batch_size, num_threads = num_preprocess_threads,
                 capacity = capacity)
 
-        classes = tf.reshape(classes, [batch_size])
+        #classes = tf.reshape(classes, [batch_size])
 
         return images, labels, filenames

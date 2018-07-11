@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # ============================================================== #
 #             Dataset to tfrecords (open pipeline)               #
 #                                                                #
@@ -84,8 +86,11 @@ def process_image(filename, coder):
         width: integer, image width in pixels.
     """
 
+    print(filename)
+    print(FLAGS.name_color)
+
     # Read the image file.
-    with tf.gfile.FastGFile(filename, 'r') as f:
+    with tf.gfile.FastGFile(filename, 'rb') as f:
         image_data = f.read()
 
     # Convert any JPEG to PNG for consistency
@@ -101,11 +106,13 @@ def process_image(filename, coder):
     height = image.shape[0]
     width = image.shape[1]
 
+    print("channel = {}".format(image.shape[2]))
+
     # Check that color has 3 channels while depth, label just 1
-    if FLAGS.name_color in filename:
-        assert image.shape[2] == 3
-    else:
-        assert image.shape[2] == 1
+#    if FLAGS.name_color in filename:
+#        assert image.shape[2] == 3
+#    else:
+#        assert image.shape[2] == 1
 
     return image_data, height, width
 
@@ -137,7 +144,7 @@ def process_image_files_batch(coder, thread_index, ranges, name, filenames, num_
     num_files_in_thread = ranges[thread_index][1] - ranges[thread_index][0]
 
     counter = 0
-    for s in xrange(num_shards_per_batch):
+    for s in range(num_shards_per_batch):
 
         # Generate a sharded version of the file name, e.g. 'train-00002-of-00010'
         shard = thread_index * num_shards_per_batch + s
@@ -185,7 +192,7 @@ def process_image_files(name, filenames, num_shards):
     spacing = np.linspace(0, len(filenames), FLAGS.num_threads + 1).astype(np.int)
     ranges = []
 
-    for i in xrange(len(spacing) - 1):
+    for i in range(len(spacing) - 1):
         ranges.append([spacing[i], spacing[i+1]])
 
     # Launch a thread for each batch.
@@ -198,7 +205,7 @@ def process_image_files(name, filenames, num_shards):
     coder = ImageCoder()
 
     threads = []
-    for thread_index in xrange(len(ranges)):
+    for thread_index in range(len(ranges)):
         args = (coder, thread_index, ranges, name, filenames, num_shards)
         t = threading.Thread(target=process_image_files_batch, args=args)
         t.start()
@@ -230,9 +237,14 @@ def find_image_files(data_dir):
     # Construct the list of image files
     color_file_path = os.path.join(data_dir, '*%s.*') % (FLAGS.name_color)
     label_file_path = os.path.join(data_dir, '*%s.*') % (FLAGS.name_label)
+    print(color_file_path)
+    print(label_file_path)
 
     color_files = tf.gfile.Glob(color_file_path)
     label_files = tf.gfile.Glob(label_file_path)
+
+    print(color_files)
+    print(label_files)
 
     assert len(color_files) == len(label_files)
 
@@ -241,7 +253,7 @@ def find_image_files(data_dir):
     filenames.extend(matching_files)
 
     # Shuffle the ordering of all image files in order to guarantee randomness
-    shuffled_index = range(len(filenames))
+    shuffled_index = np.arange(len(filenames))
     random.seed(12345)
     random.shuffle(shuffled_index)
 
